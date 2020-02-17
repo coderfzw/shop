@@ -54,9 +54,9 @@ export default {
     },
     login() {
       this.$refs.form.validate(async valid => {
-        //判断校验结果
+        //判断校验规则结果 如果为false不用发送请求
         if (!valid) return;
-        //判断成功,获取登录验证请求
+        //判断成功,发送登录请求
         const res = await this.$http.post("/login", this.loginForm);
         //判断是否登录成功
         if (res.data.meta.status !== 200)
