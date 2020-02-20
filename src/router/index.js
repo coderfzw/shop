@@ -1,11 +1,21 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Login from '@/components/Login'
-import Home from '@/components/Home'
-import Welcome from '@/components/Welcome'
-import User from '@/components/user/User'
-import Rights from '@/components/power/Rights'
-import Roles from '@/components/power/Roles'
+// import Login from '@/components/Login'
+// import Home from '@/components/Home'
+// import Welcome from '@/components/Welcome'
+// import User from '@/components/user/User'
+// import Rights from '@/components/power/Rights'
+// import Roles from '@/components/power/Roles'
+// import Categories from '@/components/goods/Categories'
+
+//懒加载
+const Login = () => import('@/components/Login')
+const Home = () => import('@/components/Home')
+const Welcome = () => import('@/components/Welcome')
+const User = () => import('@/components/user/User')
+const Rights = () => import('@/components/power/Rights')
+const Roles = () => import('@/components/power/Roles')
+const Categories = () => import('@/components/goods/Categories')
 
 Vue.use(VueRouter)
 
@@ -38,6 +48,10 @@ const routes = [
       {
         path: '/roles',
         component: Roles
+      },
+      {
+        path: '/categories',
+        component: Categories
       }
     ]
   }
