@@ -17,6 +17,8 @@ const Rights = () => import('@/components/power/Rights')
 const Roles = () => import('@/components/power/Roles')
 const Categories = () => import('@/components/goods/Categories')
 const Params = () => import('@/components/goods/Params')
+const List = () => import('@/components/goods/List')
+const Add = () => import('@/components/goods/Add')
 
 Vue.use(VueRouter)
 
@@ -57,6 +59,14 @@ const routes = [
       {
         path: '/params',
         component: Params
+      },
+      {
+        path: '/goods',
+        component: List,
+      },
+      {
+        path: '/goods/add',
+        component: Add
       }
     ]
   }
@@ -69,12 +79,12 @@ const router = new VueRouter({
 })
 
 //挂载路由导航守卫
-router.beforeEach((to,from,next) => {
+router.beforeEach((to, from, next) => {
   //检测要跳转的是否是登录页，是则放行
-  if(to.path == '/login') return next()
+  if (to.path == '/login') return next()
   //不是则检测是否有token值,存在则放行,不存在则返回登录页
   const token = window.sessionStorage.getItem('token')
-  if(!token) return next('/login')
+  if (!token) return next('/login')
   next()
 })
 
