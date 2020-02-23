@@ -46,9 +46,9 @@
             <el-form-item label="商品数量" prop="goods_number">
               <el-input v-model="addForm.goods_number" type="number"></el-input>
             </el-form-item>
-            <el-form-item label="商品分类" prop="selectIds">
+            <el-form-item label="商品分类" prop="goods_cat">
               <el-cascader
-                v-model="addForm.selectIds"
+                v-model="addForm.goods_cat"
                 :options="cateList"
                 :props="cateProps"
                 @change="handleChange"
@@ -108,8 +108,7 @@ export default {
         goods_weight: 0,
         goods_number: 0,
         // 分类数组
-        selectIds: [],
-        goods_cat: "",
+        goods_cat: [],
         // 图片数组
         pics: [],
         // 商品内容描述
@@ -130,7 +129,7 @@ export default {
         goods_number: [
           { required: true, message: "请输入商品数量", trigger: "blur" }
         ],
-        selectIds: [
+        goods_cat: [
           { required: true, message: "请选择商品分类", trigger: "blur" }
         ]
       },
@@ -157,8 +156,6 @@ export default {
       previewVisible: false,
       // 图片预览路径
       previewPath: "",
-      //分类选中数组副本
-      selectIds_bak: []
     };
   },
   created() {
@@ -172,13 +169,13 @@ export default {
     },
     // 级联选择器选中项变化
     handleChange() {
-      if (this.addForm.selectIds.length !== 3) {
-        this.addForm.selectIds = [];
+      if (this.addForm.goods_cat.length !== 3) {
+        this.addForm.goods_cat = [];
       }
     },
     // tab切换前的钩子
     beforeTabLeave(activeName, oldActiveName) {
-      if (oldActiveName === "0" && this.addForm.selectIds.length !== 3) {
+      if (oldActiveName === "0" && this.addForm.goods_cat.length !== 3) {
         this.$message.error("请先选择商品分类");
         return false;
       }
@@ -238,15 +235,15 @@ export default {
       this.$refs.addFormRef.validate(async valid => {
         if (!valid) return this.$message.error("请填写必要的表单项！");
         //处理逻辑问题
-        // 先把分类选中的id赋值到addForm的goods_cat属性里，然后把selectIds属性删除掉（为了提交请求）
-        this.addForm.goods_cat = this.addForm.selectIds.join(",");
+        const form = JSON.parse(JSON.stringify(this.addForm))
+        form.goods_cat = this.addForm.goods_cat.join(",");
         //处理动态参数
         this.manyTableData.forEach(item => {
           const newInfo = {
             attr_id: item.attr_id,
             attr_value: item.attr_vals.join(" ")
           };
-          this.addForm.attrs.push(newInfo);
+          form.attrs.push(newInfo);
         });
         //处理静态属性
         this.onlyTableData.forEach(item => {
@@ -254,17 +251,12 @@ export default {
             attr_id: item.attr_id,
             attr_value: item.attr_vals
           };
-          this.addForm.attrs.push(newInfo);
+          form.attrs.push(newInfo);
         });
-        this.selectIds_bak = []
-        this.selectIds_bak.push(...this.addForm.selectIds)
-        delete this.addForm.selectIds
         //发起网络请求
         //商品名称必须是唯一的
-        const {data: res} = await this.$http.post('goods',this.addForm)
+        const {data: res} = await this.$http.post('goods',form)
         if(res.meta.status !== 201) {
-          this.addForm.selectIds = []
-          this.addForm.selectIds.push(...this.selectIds_bak)
           return this.$message.error(res.meta.msg)
         }
         this.$message.success(res.meta.msg)
@@ -274,8 +266,8 @@ export default {
   },
   computed: {
     cateId() {
-      if (this.addForm.selectIds.length === 3) {
-        return this.addForm.selectIds[2];
+      if (this.addForm.goods_cat.length === 3) {
+        return this.addForm.goods_cat[2];
       }
       return null;
     }
