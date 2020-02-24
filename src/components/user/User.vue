@@ -343,6 +343,7 @@ export default {
         .then(async () => {
           //发送删除的网络请求
           const { data: res } = await this.$http.delete("/users/" + id);
+          if(res.meta.status !== 200) return this.$message.error(res.meta.msg)
           //重新加载用户列表
           this.getUserList();
           this.$message({
