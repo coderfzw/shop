@@ -235,6 +235,7 @@ export default {
       this.$refs.addFormRef.validate(async valid => {
         if (!valid) return this.$message.error("请填写必要的表单项！");
         //处理逻辑问题
+        //深拷贝
         const form = JSON.parse(JSON.stringify(this.addForm))
         form.goods_cat = this.addForm.goods_cat.join(",");
         //处理动态参数
